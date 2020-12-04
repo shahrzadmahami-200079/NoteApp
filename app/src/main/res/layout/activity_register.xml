@@ -3,18 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    android:background="#242424"
+    android:weightSum="7"
     android:gravity="center"
     android:padding="12dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".RegisterActivity">
 
-    <ImageView
-        android:layout_width="383dp"
-        android:layout_height="50dp"
-        android:src="@drawable/logo" />
-
-
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/note_logo"
+                    tools:ignore="ContentDescription" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
