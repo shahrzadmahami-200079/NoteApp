@@ -8,7 +8,7 @@
     android:padding="12dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".login">
+    tools:context=".Login">
 
     <ImageView
         android:layout_width="wrap_content"
