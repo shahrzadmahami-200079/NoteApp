@@ -6,4 +6,9 @@
     <color name="windowBackground">#001871</color>
     <color name="navigationBarColor">#73024B</color>
     <color name="colorAccent">#FF80AB</color>
+    <color name="ic_edit">#F50057</color>
+    <color name="ic_delete">#F50057</color>
+    <color name="ic_add_note">#F50057</color>
+    <color name="black">#000000</color>
+
 </resources>
