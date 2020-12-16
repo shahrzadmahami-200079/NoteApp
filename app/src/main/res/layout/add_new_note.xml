@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidUnknownAttribute -->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+
+
+
+    <TextView
+        android:id="@+id/save"
+        android:layout_width="23dp"
+        android:layout_height="23dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/ic_save"
+        tools:ignore="ObsoleteLayoutParam,RtlHardcoded"/>
+
+
+
+
+
+    <EditText
+        android:id="@+id/etTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="35dp"
+        android:layout_marginRight="16dp"
+        android:padding="15dp"
+        android:hint="Title"
+        android:maxLines="1"/>
+
+
+    <EditText
+        android:id="@+id/etDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="35dp"
+        android:layout_marginRight="16dp"
+        android:padding="15dp"
+        android:inputType="textMultiLine"
+        android:hint="Description Of Note ..."
+        android:layout_below="@id/etTitle"
+        android:maxLines="1"/>
+
+
+</RelativeLayout>
