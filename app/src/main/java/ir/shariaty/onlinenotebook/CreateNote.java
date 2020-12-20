@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +29,7 @@ public class CreateNote extends AppCompatActivity {
     private EditText description;
 
     private ProgressDialog progressDialog;
-    private MaterialAlertDialogBuilder alertDialogBuilder;
+
 
     private DatabaseReference mRootRef;
     private FirebaseAuth mAuth;
@@ -85,6 +86,11 @@ public class CreateNote extends AppCompatActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(CreateNote.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }

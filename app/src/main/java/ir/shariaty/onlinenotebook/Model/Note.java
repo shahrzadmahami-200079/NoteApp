@@ -2,7 +2,7 @@ package ir.shariaty.onlinenotebook.Model;
 
 public class Note {
 
-    private String view_text;
+
     private String title;
     private String description;
     private Long time;
@@ -10,20 +10,15 @@ public class Note {
     Note() {
     }
 
-    public Note(String view_text, String title, String description, Long time) {
-        this.view_text = view_text;
+    public Note( String title, String description, Long time) {
+
         this.title = title;
         this.description = description;
         this.time = time;
     }
 
-    public String getView_text() {
-        return view_text;
-    }
 
-    public void setView_text(String view_text) {
-        this.view_text = view_text;
-    }
+
 
     public String getTitle() {
         return title;
