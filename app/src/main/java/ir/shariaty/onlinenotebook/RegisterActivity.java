@@ -1,22 +1,15 @@
 package ir.shariaty.onlinenotebook;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,7 +23,7 @@ public class RegisterActivity extends Activity {
     private Button register;
     private TextView loginUser;
 
-    /* ProgressDialog pd;*/
+    ProgressDialog pd;
 
     private DatabaseReference mRootRef;
     private FirebaseAuth mAuth;
@@ -48,52 +41,50 @@ public class RegisterActivity extends Activity {
 
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-        /* pd = new ProgressDialog(this);*/
+        pd = new ProgressDialog(this);
 
-        loginUser.setOnClickListener(view -> startActivity(new Intent(RegisterActivity.this, Login.class)));
+        loginUser.setOnClickListener(v -> startActivity(new Intent(RegisterActivity.this, Login.class)));
 
         register.setOnClickListener(v -> {
+            String txtUsername = username.getText().toString();
             String txtEmail = email.getText().toString();
             String txtPassword = password.getText().toString();
-            String txtUsername = username.getText().toString();
 
-            if (TextUtils.isEmpty(txtEmail) || TextUtils.isEmpty(txtPassword) || TextUtils.isEmpty(txtUsername)) {
-                Toast.makeText(RegisterActivity.this, "Empty Fields!", Toast.LENGTH_SHORT).show();
-            } else if (txtPassword.length() < 6) {
-                Toast.makeText(RegisterActivity.this, "Password too short", Toast.LENGTH_SHORT).show();
+            if (TextUtils.isEmpty(txtUsername) || TextUtils.isEmpty(txtEmail) || TextUtils.isEmpty(txtPassword)) {
+                Toast.makeText(RegisterActivity.this, "Empty Fields!" , Toast.LENGTH_SHORT).show();
+            } else if (txtPassword.length() < 6 ) {
+                Toast.makeText(RegisterActivity.this, "Password too short" , Toast.LENGTH_SHORT).show();
             } else {
-                registerUser(txtEmail, txtPassword, txtUsername);
+                registerUser (txtUsername , txtEmail , txtPassword);
             }
         });
     }
 
-    private void registerUser(final String email, final String password, final String username) {
-        /* pd.setMessage("Please Wait");
-        pd.show();*/
+    private void registerUser(final String username, final String email, final String password) {
 
+        pd.setMessage("Please Wait");
+        pd.show();
 
-        mAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener(authResult -> {
+        mAuth.createUserWithEmailAndPassword(email , password).addOnSuccessListener(authResult -> {
+
             HashMap<String, Object> map = new HashMap<>();
+            map.put("email" , email);
+            map.put("username" , username);
+            map.put("id" , mAuth.getCurrentUser().getUid());
 
-            map.put("email", email);
-            map.put("username", username);
-            map.put("id", mAuth.getCurrentUser().getUid());
 
-            mRootRef.child("Users").child(mAuth.getCurrentUser().getUid()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        /* pd.dismiss();*/
-                        Toast.makeText(RegisterActivity.this, "Register is Successful", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(RegisterActivity.this, MainPage.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        finish();
-                    }
+            mRootRef.child("Users").child(mAuth.getCurrentUser().getUid()).setValue(map).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    pd.dismiss();
+                    Toast.makeText(RegisterActivity.this, "Register is Successful", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegisterActivity.this, MainPage.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
                 }
             });
         }).addOnFailureListener(e -> {
-            /* pd.dismiss();*/
+            pd.dismiss();
             Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
