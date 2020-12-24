@@ -3,7 +3,6 @@ package ir.shariaty.onlinenotebook;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,10 +44,10 @@ public class MainPage extends AppCompatActivity implements NoteAdapter.ListItemC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainpage);
 
-
-        myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
-        setSupportActionBar(myToolbar);
+//
+//        myToolbar = findViewById(R.id.toolbar);
+//        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
+//        setSupportActionBar(myToolbar);
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -76,7 +75,7 @@ public class MainPage extends AppCompatActivity implements NoteAdapter.ListItemC
         user_name = findViewById(R.id.ivUserName);
 
         addNote.setOnClickListener(addView -> {
-            startActivity(new Intent(MainPage.this, CreateNote.class)
+            startActivity(new Intent(MainPage.this, CreateNoteActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
             finish();
@@ -133,11 +132,12 @@ public class MainPage extends AppCompatActivity implements NoteAdapter.ListItemC
 
     @Override
     public void onListItemClick(Note note) {
-        Intent intentAlter = new Intent(this, AlterView.class)
+        Intent intentAlter = new Intent(this, ActivityAlterView.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intentAlter.putExtra("title", note.getTitle());
         intentAlter.putExtra("description", note.getDescription());
         intentAlter.putExtra("time", note.getTime().toString());
         startActivity(intentAlter);
+        finish();
     }
 }

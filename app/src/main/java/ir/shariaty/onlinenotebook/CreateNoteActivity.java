@@ -11,19 +11,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
-import ir.shariaty.onlinenotebook.Model.Note;
-
-public class CreateNote extends AppCompatActivity {
+public class CreateNoteActivity extends AppCompatActivity {
     private TextView save;
     private EditText title;
     private EditText description;
@@ -38,7 +33,7 @@ public class CreateNote extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_new_note);
+        setContentView(R.layout.activity_create_note);
 
 
         save = findViewById(R.id.save);
@@ -63,7 +58,7 @@ public class CreateNote extends AppCompatActivity {
         Long time = System.currentTimeMillis();
 
         if (TextUtils.isEmpty(txtTitle) || TextUtils.isEmpty(txtDescription)) {
-            Toast.makeText(CreateNote.this, "Empty Fields!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CreateNoteActivity.this, "Empty Fields!", Toast.LENGTH_SHORT).show();
         } else {
             progressDialog.setMessage("Please Wait ... ");
             progressDialog.show();
@@ -78,11 +73,11 @@ public class CreateNote extends AppCompatActivity {
             mapItemNote.put("description", txtDescription);
             mapItemNote.put("time", time);
 
-            mRootRef.child("Note").child(mAuth.getCurrentUser().getUid()).setValue(noteId).addOnCompleteListener(task -> {
+            mRootRef.child(mAuth.getCurrentUser().getUid()).child(noteId).setValue(mapItemNote).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     progressDialog.dismiss();
-                    Toast.makeText(CreateNote.this, "Successful Save Note", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(CreateNote.this, MainPage.class);
+                    Toast.makeText(CreateNoteActivity.this, "Successful Save Note", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(CreateNoteActivity.this, MainPage.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();
@@ -90,7 +85,7 @@ public class CreateNote extends AppCompatActivity {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(CreateNote.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateNoteActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }

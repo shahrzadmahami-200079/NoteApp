@@ -2,16 +2,18 @@ package ir.shariaty.onlinenotebook;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -22,18 +24,13 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
-import ir.shariaty.onlinenotebook.Adapter.NoteAdapter;
 import ir.shariaty.onlinenotebook.Model.Note;
 
-public class AlterView extends AppCompatActivity {
+public class ActivityAlterView extends AppCompatActivity {
 
-    Toolbar myToolbar;
     private TextView edit;
     private TextView delete;
     private TextView time;
@@ -41,8 +38,13 @@ public class AlterView extends AppCompatActivity {
     private TextView description;
     private FirebaseAuth mAuth;
     private Note mNote;
-    private NoteAdapter noteAdapter;
     private ProgressDialog progressDialog;
+    private TextView save;
+    private EditText etTitle;
+    private EditText etDescription;
+    private LinearLayout show;
+    private RelativeLayout rlEdit;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +56,13 @@ public class AlterView extends AppCompatActivity {
                 getIntent().getStringExtra("description"),
                 Long.parseLong(getIntent().getStringExtra("time")));
 
-        myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
-        setSupportActionBar(myToolbar);
 
+        save = findViewById(R.id.tvSave);
+        etTitle = findViewById(R.id.etTitle);
+        etDescription = findViewById(R.id.etDescription);
+
+        rlEdit = findViewById(R.id.rlEdit);
+        show = findViewById(R.id.show);
 
         edit = findViewById(R.id.edit);
         delete = findViewById(R.id.delete);
@@ -78,13 +83,21 @@ public class AlterView extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        edit.setOnClickListener(editView -> updateNote(mNote));
+        edit.setOnClickListener(editView -> {
+                    etDescription.setText(mNote.getDescription());
+                    etTitle.setText(mNote.getTitle());
+                    show.setVisibility(View.GONE);
+                    rlEdit.setVisibility(View.VISIBLE);
+                }
+        );
+
+        save.setOnClickListener(viewEdit -> {
+            updateNote(mNote);
+        });
+
         delete.setOnClickListener(deleteView -> deleteNote(mNote));
 
 
-    }
-
-    private void setSupportActionBar(Toolbar myToolbar) {
     }
 
     private void deleteNote(Note note) {
@@ -100,9 +113,9 @@ public class AlterView extends AppCompatActivity {
 
                 }
                 //back to Main Activity
-               /* startActivity(new Intent(AlterView.this, MainPage.class)
+                startActivity(new Intent(ActivityAlterView.this, MainPage.class)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                finish();*/
+                finish();
             }
 
             @Override
@@ -114,17 +127,16 @@ public class AlterView extends AppCompatActivity {
     }
 
     private void updateNote(Note noteUpdate) {
-        String txtTitle = title.getText().toString().trim();
-        String txtDescription = description.getText().toString().trim();
+        String txtTitle = etTitle.getText().toString().trim();
+        String txtDescription = etDescription.getText().toString().trim();
         Long timeNote = System.currentTimeMillis();
 
-        if (TextUtils.isEmpty(txtTitle) || TextUtils.isEmpty(txtDescription) ) {
-            Toast.makeText(AlterView.this, "Please Enter All Field", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(txtTitle) || TextUtils.isEmpty(txtDescription)) {
+            Toast.makeText(ActivityAlterView.this, "Please Enter All Field", Toast.LENGTH_SHORT).show();
 
-                if (TextUtils.isEmpty(txtTitle)) title.requestFocus();
-                else if (TextUtils.isEmpty(txtDescription)) description.requestFocus();
-                else title.requestFocus();
-
+            if (TextUtils.isEmpty(txtTitle)) etTitle.requestFocus();
+            else if (TextUtils.isEmpty(txtDescription)) etDescription.requestFocus();
+            else etTitle.requestFocus();
 
 
         } else {
@@ -145,10 +157,12 @@ public class AlterView extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         snapshot.getRef().setValue(mapNote);
-
                     }
 
                     progressDialog.dismiss();
+
+                    show.setVisibility(View.VISIBLE);
+                    rlEdit.setVisibility(View.GONE);
 
                     title.setText(txtTitle);
                     description.setText(txtDescription);
@@ -156,20 +170,25 @@ public class AlterView extends AppCompatActivity {
                     SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat(timeNote);
                     String date = simpleDateFormat1.format(mNote.getTime());
                     time.setText(date);
-
-
-
-            }
+                }
 
                 @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.e("NoteAdapter", "onCancelledUpdateNote", databaseError.toException());
+                public void onCancelled(@NonNull DatabaseError error) {
+
                 }
             });
-
         }
-  }
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //back to Main Activity
+        startActivity(new Intent(ActivityAlterView.this, MainPage.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        finish();
+
+    }
 }
 
 
