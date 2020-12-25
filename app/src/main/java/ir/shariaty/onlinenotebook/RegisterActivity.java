@@ -23,7 +23,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
-@SuppressWarnings("Convert2Lambda")
 public class RegisterActivity extends Activity {
     private EditText email;
     private EditText password;
@@ -36,7 +35,6 @@ public class RegisterActivity extends Activity {
     private DatabaseReference mRootRef;
     private FirebaseAuth mAuth;
 
-    @SuppressWarnings("Convert2Lambda")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,29 +50,19 @@ public class RegisterActivity extends Activity {
         mAuth = FirebaseAuth.getInstance();
         /* pd = new ProgressDialog(this);*/
 
-        loginUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(RegisterActivity.this, Login.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                finish();
-            }
-        });
+        loginUser.setOnClickListener(view -> startActivity(new Intent(RegisterActivity.this, Login.class)));
 
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String txtEmail = email.getText().toString().trim();
-                String txtPassword = password.getText().toString();
-                String txtUsername = username.getText().toString();
+        register.setOnClickListener(v -> {
+            String txtEmail = email.getText().toString();
+            String txtPassword = password.getText().toString();
+            String txtUsername = username.getText().toString();
 
-                if (TextUtils.isEmpty(txtUsername) || TextUtils.isEmpty(txtEmail) ||  TextUtils.isEmpty(txtPassword)) {
-                    Toast.makeText(RegisterActivity.this, "Empty Fields!", Toast.LENGTH_SHORT).show();
-                } else if (txtPassword.length() < 6) {
-                    Toast.makeText(RegisterActivity.this, "Password too short", Toast.LENGTH_SHORT).show();
-                } else {
-                    registerUser(txtEmail, txtPassword, txtUsername);
-                }
+            if (TextUtils.isEmpty(txtEmail) || TextUtils.isEmpty(txtPassword) || TextUtils.isEmpty(txtUsername)) {
+                Toast.makeText(RegisterActivity.this, "Empty Fields!", Toast.LENGTH_SHORT).show();
+            } else if (txtPassword.length() < 6) {
+                Toast.makeText(RegisterActivity.this, "Password too short", Toast.LENGTH_SHORT).show();
+            } else {
+                registerUser(txtEmail, txtPassword, txtUsername);
             }
         });
     }
@@ -84,34 +72,29 @@ public class RegisterActivity extends Activity {
         pd.show();*/
 
 
-        mAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-            @Override
-            public void onSuccess(AuthResult authResult) {
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("email", email);
-                map.put("username", username);
-                map.put("id", mAuth.getCurrentUser().getUid());
+        mAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener(authResult -> {
+            HashMap<String, Object> map = new HashMap<>();
 
-                mRootRef.child("Users").child(mAuth.getCurrentUser().getUid()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                          /*  pd.dismiss(); */
-                            Toast.makeText(RegisterActivity.this, "Register is Successful", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(RegisterActivity.this, MainPage.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                            finish();
-                        }
+            map.put("email", email);
+            map.put("username", username);
+            map.put("id", mAuth.getCurrentUser().getUid());
+
+            mRootRef.child("Users").child(mAuth.getCurrentUser().getUid()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        /* pd.dismiss();*/
+                        Toast.makeText(RegisterActivity.this, "Register is Successful", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(RegisterActivity.this, MainPage.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        finish();
                     }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-               /* pd.dismiss(); */
-                Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+                }
+            });
+        }).addOnFailureListener(e -> {
+            /* pd.dismiss();*/
+            Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
 }
